@@ -20,7 +20,6 @@ var _ReactBootstrap = ReactBootstrap,
 var recipeBook = void 0;
 var initialData = [{ "title": "Pho", "ingredients": "Beef bones, Rice noodles, Onion, Star anise, Ginger", "key": 0 }, { "title": "Vietnamese Spicy Beef Noodle Soup (Bun Bo Hue)", "ingredients": "Beef bones, Minced garlic, Minced lemongras, Shrimp paste", "key": 1 }, { "title": "Bun Rieu Cua", "ingredients": "Paddy crabs,Tomatoes, Onion, Eggs,  Perilla, Rice vermicelli", "key": 2 }];
 if (localStorage._trangtran_recipeBook) {
-  console.log(localStorage._trangtran_recipeBook);
   recipeBook = JSON.parse(localStorage._trangtran_recipeBook);
 } else {
   recipeBook = initialData;
@@ -202,7 +201,6 @@ var App = function (_React$Component2) {
   }, {
     key: "onDeleteRecipe",
     value: function onDeleteRecipe(recipe) {
-      console.log(" on delete recipe ");
       var updatedRecipeBook = this.state.recipeBook.filter(function (item, index) {
         return recipe !== item;
       });
