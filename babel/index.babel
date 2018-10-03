@@ -1,192 +1,194 @@
 const {Accordion, Panel, Modal, Button, ButtonToolbar, ListGroup, ListGroupItem} = ReactBootstrap;
 let recipeBook;
 let initialData = [
-{"title": "Pho", "ingredients": "Beef bones, Rice noodles, Onion, Star anise, Ginger", "key": 0},
-{"title": "Vietnamese Spicy Beef Noodle Soup (Bun Bo Hue)", "ingredients": "Beef bones, Minced garlic, Minced lemongras, Shrimp paste", "key": 1},
-{"title": "Bun Rieu Cua", "ingredients": "Paddy crabs,Tomatoes, Onion, Eggs,  Perilla, Rice vermicelli", "key": 2},
+  {"title": "Pho", "ingredients": "Beef bones, Rice noodles, Onion, Star anise, Ginger", "key": 0},
+  {"title": "Vietnamese Spicy Beef Noodle Soup (Bun Bo Hue)", "ingredients": "Beef bones, Minced garlic, Minced lemongras, Shrimp paste", "key": 1},
+  {"title": "Bun Rieu Cua", "ingredients": "Paddy crabs,Tomatoes, Onion, Eggs,  Perilla, Rice vermicelli", "key": 2},
 ];
 if (localStorage._trangtran_recipeBook) {
-console.log(localStorage._trangtran_recipeBook);
-recipeBook =  JSON.parse(localStorage._trangtran_recipeBook);
+  console.log(localStorage._trangtran_recipeBook);
+  recipeBook =  JSON.parse(localStorage._trangtran_recipeBook);
 } else {
-recipeBook = initialData;
+  recipeBook = initialData;
 }
-
-class Recipes extends React.Component {
-constructor(props) {
-  super(props);
-
-  this.handleDelete = this.handleDelete.bind(this);
-  this.handleEdit = this.handleEdit.bind(this);
-}
-
-handleDelete() {    
-  this.props.onDeleteRecipe(this.props.recipe);
-}
-
-handleEdit() {
-  this.props.onEditRecipe(this.props.recipe);
-}
-
-render() {
-   var ingredients = this.props.recipe.ingredients.split(",").map((item, key) => {
-    return(
-       <li className="list-group-item">{item}</li>
-    );
-  });
-
-   return(
-       <Panel header={this.props.recipe.title} eventKey={this.props.key} collapsible={true}>
-         <ListGroup>
-            {ingredients}
-         </ListGroup>
-           <div className="btn-group">
-             <Button className="edit-btn" onClick={this.handleEdit}><i className="fa fa-pencil-alt"></i></Button>
-             <Button className="delete-btn" onClick={this.handleDelete}><i className="fa fa-trash-alt"></i></Button>
-           </div>
-        </Panel>
-    );
+// recipeBook = JSON.parse(localStorage._trangtran_recipeBook);
+ class Recipes extends React.Component {
+  constructor(props) {
+    super(props);
+    
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
   }
-};
-
-class App extends React.Component {
-constructor(props) {
-  super(props);
-  this.state = {
-    recipeBook: recipeBook,
-    isEditing: false,
-    show: false,
-    title: '', 
-    ingredients: []
+  
+  handleDelete() {    
+    this.props.onDeleteRecipe(this.props.recipe);
   }
-    this.showModal = this.showModal.bind(this);
-    this.hideModal = this.hideModal.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.onAddNewRecipe = this.onAddNewRecipe.bind(this);
-    this.onDeleteRecipe = this.onDeleteRecipe.bind(this);
-    this.onEditRecipe = this.onEditRecipe.bind(this);
-    this.onSaveEditedRcipe = this.onSaveEditedRcipe.bind(this);
-}
-
-componentDidUpdate() {
-  localStorage._trangtran_recipeBook = JSON.stringify(this.state.recipeBook);
-}
-
-showModal() {
-  this.setState({show: true});
-}
-
-hideModal() {
-  this.setState({
-    show: false,
-    title: "",
-    ingredients: []
-  });
-}
-
-handleChange({target}) {
-  this.setState({
-     [target.name]: target.value
-  });
-}
-
-onAddNewRecipe() {
-  if(this.state.title && this.state.ingredients) {
-    var recipeBookOnLocal = JSON.parse(localStorage._trangtran_recipeBook);
-    if (recipeBookOnLocal.length > 0) {
-      var newRecipe = {title: this.state.title, ingredients: this.state.ingredients, key: recipeBookOnLocal[recipeBookOnLocal.length - 1].key + 1};
-    } else {
-      var newRecipe = {title: this.state.title, ingredients: this.state.ingredients, key: 0};
+  
+  handleEdit() {
+    this.props.onEditRecipe(this.props.recipe);
+  }
+   render() {
+     var ingredients = this.props.recipe.ingredients.split(",").map((item, key) => {
+      return(
+         <li className="list-group-item">{item}</li>
+      );
+    });
+        return(
+              <Panel header={this.props.recipe.title} eventKey={this.props.key} collapsible={true}>
+               <ListGroup>
+                  {ingredients}
+               </ListGroup>
+                 <div className="btn-group">
+                   <Button className="edit-btn" onClick={this.handleEdit}><i className="fa fa-pencil-alt"></i></Button>
+                   <Button className="delete-btn" onClick={this.handleDelete}><i className="fa fa-trash-alt"></i></Button>
+                 </div>
+           </Panel>
+        );
     }
-
-    recipeBook.push(newRecipe);
-    this.setState({recipeBook});
-    this.setState({show: false, title: '', ingredients: []});
-  } else {
-    alert("please fill in the recipe title and ingredients!");
+};
+ class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      recipeBook: recipeBook,
+      isEditing: false,
+      show: false,
+      title: '', 
+      ingredients: []
+    }
+      this.showModal = this.showModal.bind(this);
+      this.hideModal = this.hideModal.bind(this);
+      this.handleChange = this.handleChange.bind(this);
+      this.onAddNewRecipe = this.onAddNewRecipe.bind(this);
+      this.onDeleteRecipe = this.onDeleteRecipe.bind(this);
+      this.onEditRecipe = this.onEditRecipe.bind(this);
+      this.onSaveEditedRcipe = this.onSaveEditedRcipe.bind(this);
   }
-}
-
-
-onEditRecipe(recipe) {
-  this.setState({
-    title: recipe.title,
-    ingredients: recipe.ingredients,
-    show: true,
-    isEditing: true,
-    editingRecipe: recipe
-  });
-}
-
-onSaveEditedRcipe() {
-    var updatedRecipeBook = this.state.recipeBook.map((recipe) => {
-    if (this.state.editingRecipe.key == recipe.key) {
-      recipe.title = this.state.title;
-      recipe.ingredients = this.state.ingredients;
-      return recipe;
-    } else {
-      return recipe;
-    }       
-  });
-
-  if (updatedRecipeBook) {
-    this.setState({
-        recipeBook: updatedRecipeBook,
-        title: "",
-        ingredients: [],
-        show: false,
-        isEditing: false
-    });      
+  
+  componentDidUpdate() {
+    localStorage._trangtran_recipeBook = JSON.stringify(this.state.recipeBook);
+    localStorage.setItem("_trangtran_recipeBook", JSON.stringify(this.state.recipeBook));
   }
-}
-
-onDeleteRecipe(recipe) {
-  console.log(" on delete recipe ");
-  var updatedRecipeBook = this.state.recipeBook.filter((item, index) => {
-     return recipe !== item;
-  });
-
-  if(updatedRecipeBook) {
+  
+  showModal() {
+    this.setState({show: true});
+  }
+   hideModal() {
     this.setState({
-       recipeBook: updatedRecipeBook
+      show: false,
+      title: "",
+      ingredients: []
     });
   }
-}
+  
+  handleChange({target}) {
+    this.setState({
+       [target.name]: target.value
+    });
+  }
+  
+  onAddNewRecipe() {
+    if(this.state.title && this.state.ingredients) {
+      var recipeBookOnLocal = JSON.parse(localStorage._trangtran_recipeBook);
+      if (recipeBookOnLocal.length > 0) {
+        var newRecipe = {title: this.state.title, ingredients: this.state.ingredients, key: recipeBookOnLocal[recipeBookOnLocal.length - 1].key + 1};
+      } else {
+        var newRecipe = {title: this.state.title, ingredients: this.state.ingredients, key: 0};
+      }
+      
+     
+      // this.setState({recipeBook: [...this.state.recipeBook, newRecipe]});
+      recipeBook.push(newRecipe);
+      this.setState({recipeBook});
+      this.setState({show: false, title: '', ingredients: []});
+    } else {
+      alert("please fill in the recipe title and ingredients!");
+    }
+  }
+ 
+  
+  onEditRecipe(recipe) {
+    this.setState({
+      title: recipe.title,
+      ingredients: recipe.ingredients,
+      show: true,
+      isEditing: true,
+      editingRecipe: recipe
+    });
+  }
+  
+  onSaveEditedRcipe() {
+       var updatedRecipeBook = this.state.recipeBook.map((recipe) => {
+      if (this.state.editingRecipe.key == recipe.key) {
+        recipe.title = this.state.title;
+        recipe.ingredients = this.state.ingredients;
+        return recipe;
+      } else {
+        return recipe;
+      }       
+    });
+    
+    if (updatedRecipeBook) {
+      this.setState({
+          recipeBook: updatedRecipeBook,
+          title: "",
+          ingredients: [],
+          show: false,
+          isEditing: false
+      });      
+    }
+  }
+ 
+  onDeleteRecipe(recipe) {
+    var isConfirmed = confirm("Are you sure you want to delete your secret recipe?");
+    if(isConfirmed) {
+      var updatedRecipeBook = this.state.recipeBook.filter((item, index) => {
+        return recipe !== item;
+      });
 
-render() {
-  const isEditing = this.state.isEditing;
-  const actionButton = isEditing ? ( <Button onClick={this.onSaveEditedRcipe}><i className="fa fa-check"></i></Button>) : (<Button onClick={this.onAddNewRecipe}><i className="fa fa-plus"></i></Button>);
-  let recipes = this.state.recipeBook.map((recipe, key) => {
-     return (<Recipes recipe={recipe} onEditRecipe={this.onEditRecipe} onDeleteRecipe={this.onDeleteRecipe} key={key}/>);
-  });
-  return(
-    <div className="recipe-wrapper">
-      <h1 className="title">Recipe book</h1>
-      <div className="utensils-icon"><i className="fa fa-utensils"></i></div>
-      <Accordion id="recipeBook">{recipes}</Accordion>
-    <ButtonToolbar>
-      <Button onClick={this.showModal}><i className="fa fa-plus"></i></Button>
-      <Modal show={this.state.show} onHide={this.hideModal} dialogClassName="custom-modal">
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Add new recipe</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form>
-            <input id="title" name="title" value={this.state.title} onChange={this.handleChange} placeholder="Enter recipe name" /><br />
-            <textarea id="ingredients" name="ingredients" value={this.state.ingredients} onChange={this.handleChange} placeholder="Add ingredients, separated by commas..." />
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          {actionButton}
-        </Modal.Footer>
-      </Modal>
-    </ButtonToolbar>
-    <div className="image">
-        <img src="http://www.pngmart.com/files/4/Cooking-PNG-Image.png" width="20%"/>
-    </div>
-    <p className="additional-text">Enjoy your cooking secret!</p>
-    </div>
-  )
-}
+      if(updatedRecipeBook) {
+        this.setState({
+          recipeBook: updatedRecipeBook
+        });
+      }
+    }
+  }
+  
+  render() {
+    const isEditing = this.state.isEditing;
+    const actionButton = isEditing ? ( <Button onClick={this.onSaveEditedRcipe}><i className="fa fa-check"></i></Button>) : (<Button onClick={this.onAddNewRecipe}><i className="fa fa-plus"></i></Button>);
+    let recipes = this.state.recipeBook.map((recipe, key) => {
+       return (<Recipes recipe={recipe} onEditRecipe={this.onEditRecipe} onDeleteRecipe={this.onDeleteRecipe} key={key}/>);
+    });
+    return(
+      <div className="recipe-wrapper">
+        <h1 className="title">Recipe book</h1>
+        <div className="utensils-icon"><i className="fa fa-utensils"></i></div>
+        <Accordion id="recipeBook">{recipes}</Accordion>
+      <ButtonToolbar>
+        <Button onClick={this.showModal}><i className="fa fa-plus"></i></Button>
+        <Modal show={this.state.show} onHide={this.hideModal} dialogClassName="custom-modal">
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-lg">Add new recipe</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form>
+              <input id="title" name="title" value={this.state.title} onChange={this.handleChange} placeholder="Enter recipe name" /><br />
+              <textarea id="ingredients" name="ingredients" value={this.state.ingredients} onChange={this.handleChange} placeholder="Add ingredients, separated by commas..." />
+            </form>
+          </Modal.Body>
+          <Modal.Footer>
+            {actionButton}
+          </Modal.Footer>
+        </Modal>
+      </ButtonToolbar>
+      <div className="image">
+          <img src="http://www.pngmart.com/files/4/Cooking-PNG-Image.png" width="20%"/>
+      </div>
+      <p className="additional-text">Enjoy your cooking secret!</p>
+      </div>
+    )
+  }
 }
 ReactDOM.render(<App />, document.getElementById('app'));
+ 
